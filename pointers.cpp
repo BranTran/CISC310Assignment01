@@ -73,9 +73,9 @@ int main(int argc, char **argv)
     
     student.n_assignments = stoi(input,&st);
     student.grades = new double[student.n_assignments];
+    cout<<endl;
 
-
-    input = "";
+    
     //Scores
     for(int i = 0; i < student.n_assignments; i++)
     {
@@ -94,8 +94,12 @@ int main(int argc, char **argv)
       //printf("Our input is %s\n",input.c_str());
       student.grades[i] = std::stod(input);
       //printf("Our input is %s, the value is %f\n",input.c_str(),student.grades[i]);
-      input = "";
     }
+    cout<<endl;
+
+
+
+
     
     // Call `CalculateStudentAverage(???, ???)`
     calculateStudentAverage(&student, &average);
