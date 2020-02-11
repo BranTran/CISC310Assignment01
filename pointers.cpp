@@ -21,6 +21,9 @@ int main(int argc, char **argv)
     Student student;
     double average;
     string input;
+    bool isZero = true;
+    int n_assignments;
+    string::size_type st;
     // Set up pointers
     student.f_name = new char[NAMESIZE];
     student.l_name = new char[NAMESIZE];
@@ -38,7 +41,7 @@ int main(int argc, char **argv)
       
       cin >> input;
     }
-    string::size_type st;
+    
     student.id = stoi(input,&st);
     
     //printf("We have an ID: %d\n",student.id);
@@ -55,25 +58,32 @@ int main(int argc, char **argv)
     strcpy(student.l_name,input.c_str());
     //printf("\n\nStudent: %s %s [%d]\n",student.f_name,student.l_name,student.id);
 
-    //Number of Assignments
-    cout << "Please enter how many assignments were graded: ";
-    input = "";
-    cin >> input;
-    //printf("getting input %s\n",input.c_str());
-    while(cin.fail() || input.find_first_not_of("0123456789") != string::npos){
-      cout << "Sorry, I cannot understand your answer" << endl;
-      if( input.find_first_not_of("0123456789") == string::npos){
-	cin.clear();
-	cin.ignore();
-      }
-      cout << "Please enter how many assignments were graded: ";
-      
-      cin >> input;
-    }
     
-    student.n_assignments = stoi(input,&st);
-    student.grades = new double[student.n_assignments];
-    cout<<endl;
+    //Number of Assignments
+    do{
+      cout << "Please enter how many assignments were graded: ";
+      input = "";
+      cin >> input;
+      //printf("getting input %s\n",input.c_str());
+      while(cin.fail() || input.find_first_not_of("0123456789") != string::npos){
+	cout << "Sorry, I cannot understand your answer" << endl;
+	if( input.find_first_not_of("0123456789") == string::npos){
+	  cin.clear();
+	  cin.ignore();
+	}
+	cout << "Please enter how many assignments were graded: ";
+	
+	cin >> input;
+      }//while failed
+
+      n_assignments = stoi(input, &st);
+      if(n_assignments != 0){
+	isZero = false;
+      }
+    }while(isZero);
+      student.n_assignments = stoi(input,&st);
+      student.grades = new double[student.n_assignments];
+      cout<<endl;
 
     
     //Scores
