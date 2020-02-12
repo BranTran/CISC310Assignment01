@@ -1,4 +1,5 @@
 // compile: g++ -std=c++11 -o pointers pointers.cpp
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -91,9 +92,9 @@ int main(int argc, char **argv)
     {
       cout << "Please enter grade for assignment "<<i<<": ";
       cin >> input;
-      while(cin.fail() || input.find_first_not_of("0123456789.") != string::npos){
+      while(cin.fail() || input.find_first_not_of("0123456789.") != string::npos || count(input.begin(),input.end(),'.') > 1){
 	cout << "Sorry, I cannot understand your answer" << endl;
-	if( input.find_first_not_of("0123456789.") == string::npos){
+	if( input.find_first_not_of("0123456789.") == string::npos || count(input.begin(),input.end(),'.') > 1){
 	  cin.clear();
 	  cin.ignore();
 	  input = "";
