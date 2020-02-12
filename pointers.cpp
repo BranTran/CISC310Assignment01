@@ -1,10 +1,23 @@
-// compile: g++ -std=c++11 -o pointers pointers.cpp
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <cstring>
+// compile: g++ -std=c++11 -o pointers.o pointers.cpp
+
+/***********************
+Author: Brandon Tran
+Date Created: Feb 05, 2020
+Last Updated: Feb 12, 2020
+Description:
+  First assignment for CISC 310 Operating Systems.
+ Program takes in user input and generates an 
+ average grade for a student
+
+
+************************/
+
+#include <algorithm> // used for count function
+#include <iostream> // cout and cin
+#include <string> //For C++ String methods
+#include <cstring> //For strcpy
+
 #define NAMESIZE 128
-#define NUMSIZE 10
 using namespace std;
 
 typedef struct Student {
@@ -15,21 +28,57 @@ typedef struct Student {
     double *grades;
 } Student;
 
+
+//Function Prototyping
 void calculateStudentAverage(void *object, double *avg);
 
-int main(int argc, char **argv)
-{
-    Student student;
-    double average;
-    string input;
-    bool isZero = true;
-    int n_assignments;
-    string::size_type st;
-    // Set up pointers
-    student.f_name = new char[NAMESIZE];
-    student.l_name = new char[NAMESIZE];
-    // Sequence of user input -> store in fields of `student`
+
+int main(int argc, char **argv){
+  // INITIALIZE VARIABLES
+  Student student;
+  double average;
+  string input; //cin goes into this string
+  bool isZero = true;//Assume is true to start
+  string::size_type st;//Used in stoi/stod
+  //-------------------------------------------------------
+  // Sequence of user input -> store in fields of `student`
+  //-------------------------------------------------------
+
+  //STUDENT ID
+  cout << "Please enter the student's id number: ";
+  cin >> input;
+  //CHECK FOR VALID ID
+  while(cin.fail() || input.find_first_not_of("0123456789") != string::npos){
+    cout << "Sorry, I cannot understand your answer" << endl;
+    if( input.find_first_not_of("0123456789") == string::npos){
+      cin.clear();
+      cin.ignore();
+    }
     cout << "Please enter the student's id number: ";
+    cin >> input;
+  }
+  student.id = stoi(input,&st);
+  //printf("We have an ID: %d\n",student.id); 
+
+  //INITIALIZE FIRST NAME AND LAST NAME
+  student.f_name = new char[NAMESIZE];
+  student.l_name = new char[NAMESIZE];
+  
+  //FIRST NAME
+  cout << "Please enter the student's first name: ";
+  cin >> input;
+  strcpy(student.f_name,input.c_str());
+    
+    
+  //LAST NAME
+  cout << "Please enter the student's last name: ";
+  cin >> input;
+  strcpy(student.l_name,input.c_str());
+    
+  //NUMBER OF ASSIGNMENTS
+  do{
+    //Do while number of assignments is not zero
+    cout << "Please enter how many assignments were graded: ";
     cin >> input;
     while(cin.fail() || input.find_first_not_of("0123456789") != string::npos){
       cout << "Sorry, I cannot understand your answer" << endl;
@@ -37,96 +86,54 @@ int main(int argc, char **argv)
 	cin.clear();
 	cin.ignore();
       }
-
-      cout << "Please enter the student's id number: ";
-      
+      cout << "Please enter how many assignments were graded: ";
       cin >> input;
     }
     
-    student.id = stoi(input,&st);
-    
-    //printf("We have an ID: %d\n",student.id);
-    
-    //First name
-    cout << "Please enter the student's first name: ";
+    if(stoi(input,&st) != 0){
+      isZero = false;
+    }    
+  }while(isZero);
+  student.n_assignments = stoi(input,&st);
+  
+  //Inialize struct with proper array
+  student.grades = new double[student.n_assignments];
+
+  //Add new line to match formatting
+  cout<<endl;
+  
+  //SCORES
+  for(int i = 0; i < student.n_assignments; i++){
+    cout << "Please enter grade for assignment "<<i<<": ";
     cin >> input;
-    strcpy(student.f_name,input.c_str());
-
-
-    //Last name
-    cout << "Please enter the student's last name: ";
-    cin >> input;
-    strcpy(student.l_name,input.c_str());
-    //printf("\n\nStudent: %s %s [%d]\n",student.f_name,student.l_name,student.id);
-
-    
-    //Number of Assignments
-    do{
-      cout << "Please enter how many assignments were graded: ";
-      input = "";
-      cin >> input;
-      //printf("getting input %s\n",input.c_str());
-      while(cin.fail() || input.find_first_not_of("0123456789") != string::npos){
-	cout << "Sorry, I cannot understand your answer" << endl;
-	if( input.find_first_not_of("0123456789") == string::npos){
-	  cin.clear();
-	  cin.ignore();
-	}
-	cout << "Please enter how many assignments were graded: ";
-	
-	cin >> input;
-      }//while failed
-
-      n_assignments = stoi(input, &st);
-      if(n_assignments != 0){
-	isZero = false;
+    while(cin.fail() || input.find_first_not_of("0123456789.") != string::npos || count(input.begin(),input.end(),'.') > 1){
+      cout << "Sorry, I cannot understand your answer" << endl;
+      if( input.find_first_not_of("0123456789.") == string::npos || count(input.begin(),input.end(),'.') > 1){
+	cin.clear();
+	cin.ignore();
       }
-    }while(isZero);
-      student.n_assignments = stoi(input,&st);
-      student.grades = new double[student.n_assignments];
-      cout<<endl;
-
-    
-    //Scores
-    for(int i = 0; i < student.n_assignments; i++)
-    {
       cout << "Please enter grade for assignment "<<i<<": ";
       cin >> input;
-      while(cin.fail() || input.find_first_not_of("0123456789.") != string::npos || count(input.begin(),input.end(),'.') > 1){
-	cout << "Sorry, I cannot understand your answer" << endl;
-	if( input.find_first_not_of("0123456789.") == string::npos || count(input.begin(),input.end(),'.') > 1){
-	  cin.clear();
-	  cin.ignore();
-	  input = "";
-	}
-	cout << "Please enter grade for assignment "<<i<<": ";
-	cin >> input;
-      }
-      //printf("Our input is %s\n",input.c_str());
-      student.grades[i] = std::stod(input);
-      //printf("Our input is %s, the value is %f\n",input.c_str(),student.grades[i]);
     }
-    cout<<endl;
+    student.grades[i] = std::stod(input);
+  }
 
+  //Add additional new line to match formatting
+  cout<<endl;  
+  
+  // Call `CalculateStudentAverage(???, ???)`
+  calculateStudentAverage(&student, &average);
+  
+  // Output `average`
+  printf("Student: %s %s [%d]\n  Average grade: %.1f\n",student.f_name,student.l_name,student.id,average);
+  return 0;
+}// int main()
 
-
-
-    
-    // Call `CalculateStudentAverage(???, ???)`
-    calculateStudentAverage(&student, &average);
-    // Output `average`
-    printf("Student: %s %s [%d]\n  Average grade: %.1f\n",student.f_name,student.l_name,student.id,average);
-    // */
-    return 0;
-}
-
-void calculateStudentAverage(void *object, double *avg)
-{
-    Student* student = (Student*)object;//Get my student formatted right;
+void calculateStudentAverage(void *object, double *avg){
+    Student* student = (Student*)object;//Get pointer formatted right;
     // Code to calculate and store average grade
-    for(int i = 0; i < student->n_assignments; i++)
-    {
+    for(int i = 0; i < student->n_assignments; i++){
         *avg = *avg + student->grades[i];
     }
     *avg = *avg / student->n_assignments;
-}
+}//calculateStudentAverage
